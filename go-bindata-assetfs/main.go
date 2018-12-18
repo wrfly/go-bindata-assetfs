@@ -86,9 +86,8 @@ func main() {
 			return
 		}
 		if !done && !isPrefix && bytes.HasPrefix(line, []byte("import (")) {
-			if debug {
-				fmt.Fprintln(out, "\t\"net/http\"")
-			} else {
+			fmt.Fprintln(out, "\t\"net/http\"")
+			if !debug {
 				fmt.Fprintln(out, "\t\"github.com/elazarl/go-bindata-assetfs\"")
 			}
 			done = true
@@ -112,6 +111,10 @@ func AssetFS() *assetfs.AssetFS {
 		return &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: assetInfo, Prefix: k}
 	}
 	panic("unreachable")
+}
+
+func FileHandler() http.Handler {
+	return http.FileServer(AssetFS())
 }`)
 	}
 	// Close files BEFORE remove calls (don't use defer).
